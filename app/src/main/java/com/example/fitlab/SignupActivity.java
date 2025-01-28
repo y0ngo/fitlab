@@ -19,7 +19,7 @@ public class SignupActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-    private EditText usernameField, userIdField, emailField, passwordField;
+    private EditText nameField, userIdField, emailField, passwordField;
     private Button signupButton;
 
     @Override
@@ -30,7 +30,7 @@ public class SignupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        usernameField = findViewById(R.id.username);
+        nameField = findViewById(R.id.name);
         userIdField = findViewById(R.id.userId);
         emailField = findViewById(R.id.email);
         passwordField = findViewById(R.id.password);
@@ -40,12 +40,12 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void signUpUser() {
-        String username = usernameField.getText().toString();
+        String name = nameField.getText().toString();
         String userId = userIdField.getText().toString();
         String email = emailField.getText().toString();
         String password = passwordField.getText().toString();
 
-        if (username.isEmpty() || userId.isEmpty() || email.isEmpty() || password.isEmpty()) {
+        if (name.isEmpty() || userId.isEmpty() || email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -57,7 +57,7 @@ public class SignupActivity extends AppCompatActivity {
 
                         // Store user details in Firestore
                         Map<String, Object> userData = new HashMap<>();
-                        userData.put("username", username);
+                        userData.put("name", name);
                         userData.put("userId", userId);
                         userData.put("email", email);
 
