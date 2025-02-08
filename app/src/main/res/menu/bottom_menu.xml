@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/baseline_home_24"/>
+
+    <item
+        android:id="@+id/find_gym"
+        android:title="Find a Gym"
+        android:icon="@drawable/baseline_sports_gymnastics_24"
+        />
+
+    <item
+        android:title=""/>
+
+    <item
+        android:id="@+id/activity"
+        android:title="Activity"
+        android:icon="@drawable/baseline_monitor_heart_24" />
+    <item
+        android:id="@+id/profile"
+        android:title="Profile"
+        android:icon="@drawable/baseline_person_24" />
+
+</menu>
