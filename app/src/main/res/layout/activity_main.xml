@@ -27,7 +27,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/fragment_layout"/>
+            android:id="@+id/fragment_container"/>
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -42,9 +42,12 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/turquoise"
-        tools:context=".MainActivity">
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/frame_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <com.google.android.material.bottomappbar.BottomAppBar
             android:id="@+id/bottomAppBar"
@@ -53,7 +56,8 @@
             android:layout_gravity="bottom"
             android:background="@color/white"
             app:fabCradleMargin="10dp"
-            app:fabCradleRoundedCornerRadius="50dp">
+            app:fabCradleRoundedCornerRadius="50dp"
+            app:fabAlignmentMode="center">
 
             <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottomNavigationView"
@@ -74,8 +78,7 @@
             app:layout_anchor="@id/bottomAppBar"
             app:maxImageSize="40dp"
             android:id="@+id/fab"
-            app:tint="@color/turquoise"
-            android:contentDescription="Add" />
+            app:tint="@color/turquoise" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
