@@ -1,36 +1,24 @@
 package com.example.fitlab;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
 
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.navigation.NavigationView;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,35 +30,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String BASE_URL = "https://wger.de/api/v2/";
 
     private DrawerLayout drawerLayout;
+    private RecyclerView recyclerView;
+    private ExerciseAdapter exerciseAdapter;
+    private WgerApi api;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        recyclerView = findViewById(R.id.recycler_view_exercises);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        WgerApi api = retrofit.create(WgerApi.class);
-        Call<ExerciseResponse> call = api.getExercises(2); // Language: English
+        api = retrofit.create(WgerApi.class);
+        fetchExercises(2); // Default to English exercises
 
-        call.enqueue(new Callback<ExerciseResponse>() {
-            @Override
-            public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    for (Exercise ex : response.body().getExercises()) {
-                        Log.d("Exercise", "Name: " + ex.getName() + ", Description: " + ex.getDescription());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ExerciseResponse> call, Throwable t) {
-                Log.e("API Error", "Failed to fetch exercises", t);
-            }
-        });
-
-        Toolbar toolbar = findViewById(R.id.toolbar); //Ignore red line errors
+        Toolbar toolbar = findViewById(R.id.toolbar); // Ignore red line errors
         setSupportActionBar(toolbar);
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -84,6 +64,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.setCheckedItem(R.id.nav_home);
         }
     }
+
+    private void fetchExercises(int language) {
+        Call<ExerciseResponse> exerciseCall = api.getExercises(language);
+        exerciseCall.enqueue(new Callback<ExerciseResponse>() {
+            @Override
+            public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Exercise> exercises = response.body().getExercises();
+                    fetchExerciseImages(exercises);
+                } else {
+                    Log.e("API Error", "Response unsuccessful or body is null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ExerciseResponse> call, Throwable t) {
+                Log.e("API Error", "Failed to fetch exercises", t);
+            }
+        });
+    }
+
+    private void fetchExercisesByMuscle(int language, int muscleId) {
+        Call<ExerciseResponse> exerciseCall = api.getExercisesByMuscle(language, muscleId);
+        exerciseCall.enqueue(new Callback<ExerciseResponse>() {
+            @Override
+            public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Exercise> exercises = response.body().getExercises();
+                    fetchExerciseImages(exercises);
+                } else {
+                    Log.e("API Error", "Response unsuccessful or body is null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ExerciseResponse> call, Throwable t) {
+                Log.e("API Error", "Failed to fetch exercises", t);
+            }
+        });
+    }
+
+    private void fetchExerciseImages(List<Exercise> exercises) {
+        Call<ExerciseImageResponse> imageCall = api.getExerciseImages(true); // Main images
+        imageCall.enqueue(new Callback<ExerciseImageResponse>() {
+            @Override
+            public void onResponse(Call<ExerciseImageResponse> call, Response<ExerciseImageResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Map<Integer, String> exerciseImageMap = new HashMap<>();
+                    for (ExerciseImage image : response.body().getExerciseImages()) {
+                        exerciseImageMap.put(image.getExerciseId(), image.getImageUrl());
+                    }
+                    for (Exercise exercise : exercises) {
+                        exercise.setImageUrl(exerciseImageMap.get(exercise.getId()));
+                    }
+                    exerciseAdapter = new ExerciseAdapter(exercises);
+                    recyclerView.setAdapter(exerciseAdapter);
+                } else {
+                    Log.e("API Error", "Response unsuccessful or body is null");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ExerciseImageResponse> call, Throwable t) {
+                Log.e("API Error", "Failed to fetch exercise images", t);
+            }
+        });
+    }
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_home) {
@@ -96,11 +144,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GymFragment()).commit();
         } else if (item.getItemId() == R.id.nav_logout) {
             Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
+        } else if (item.getItemId() == R.id.nav_filter_muscle) {
+            // Example muscle group ID, replace with actual selection logic
+            int selectedMuscleId = 1;
+            fetchExercisesByMuscle(2, selectedMuscleId);
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
