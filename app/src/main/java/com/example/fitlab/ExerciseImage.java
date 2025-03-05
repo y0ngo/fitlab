@@ -1,5 +1,7 @@
 package com.example.fitlab;
 
+
+
 import com.google.gson.annotations.SerializedName;
 
 public class ExerciseImage {
@@ -8,6 +10,7 @@ public class ExerciseImage {
 
     @SerializedName("exercise")
     private int exerciseId;
+
 
     public String getImageUrl() {
         return imageUrl;

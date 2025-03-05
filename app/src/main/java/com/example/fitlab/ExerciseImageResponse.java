@@ -10,4 +10,7 @@ public class ExerciseImageResponse {
     public List<ExerciseImage> getExerciseImages() {
         return exerciseImages;
     }
+
+
+
 }

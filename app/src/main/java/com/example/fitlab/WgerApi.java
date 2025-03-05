@@ -12,5 +12,5 @@ public interface WgerApi {
     Call<ExerciseResponse> getExercisesByMuscle(@Query("language") int language, @Query("muscles") int muscleId);
 
     @GET("exerciseimage/")
-    Call<ExerciseImageResponse> getExerciseImages(@Query("is_main") boolean isMain);
+    Call<ExerciseImageResponse> getExerciseImages(@Query("exercise") int exerciseId);
 }

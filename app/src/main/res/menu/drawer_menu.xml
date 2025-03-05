@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/menu/drawer_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Other menu items -->
+    <item
+        android:id="@+id/nav_filter_muscle"
+        android:title="Filter by Muscle"
+        android:icon="@drawable/baseline_filter_list_24" />
+</menu>

@@ -28,6 +28,13 @@
             android:layout_height="match_parent"
             android:id="@+id/fragment_container">
 
+            <Spinner
+                android:id="@+id/spinner_muscle_group"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="16dp"
+                android:padding="8dp" />
+
             <!-- Add RecyclerView to display exercises -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view_exercises"
@@ -86,7 +93,7 @@
             android:src="@drawable/baseline_add_24"
             app:layout_anchor="@id/bottomAppBar"
             app:maxImageSize="40dp"
-            android:id="@+id/fab"
+            android:id="@+id/add_workout_fab"
             app:tint="@color/turquoise" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

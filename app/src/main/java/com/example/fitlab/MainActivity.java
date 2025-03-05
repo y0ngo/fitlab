@@ -1,8 +1,13 @@
 package com.example.fitlab;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.HashMap;
@@ -31,16 +37,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawerLayout;
     private RecyclerView recyclerView;
-    private ExerciseAdapter exerciseAdapter;
+    private ExerciseAdapterFilterable exerciseAdapter;
     private WgerApi api;
+    private Spinner spinnerMuscleGroup;
+    private boolean isSpinnerInitialized = false;
+    private Map<String, Integer> muscleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FloatingActionButton fabAddWorkout = findViewById(R.id.add_workout_fab);
+        fabAddWorkout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Start SelectExerciseActivity
+                Intent intent = new Intent(MainActivity.this, SelectExerciseActivity.class);
+                startActivity(intent);
+            }
+        });
+
         recyclerView = findViewById(R.id.recycler_view_exercises);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        spinnerMuscleGroup = findViewById(R.id.spinner_muscle_group);
+        setupMuscleGroupSpinner();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -65,6 +87,60 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void setupMuscleGroupSpinner() {
+        String[] muscleGroups = {
+                "Select Muscle Group", "Biceps", "Anterior deltoid (Front Shoulders)", "Serratus anterior", "Pectoralis major (Chest)",
+                "Triceps", "Trapezius (Upper Back)", "Quadriceps", "Gastrocnemius (Calves)", "Gluteus maximus (Glutes)",
+                "Hamstrings", "Latissimus dorsi (Lats)", "Obliques", "Abdominals (Abs)", "Posterior deltoid (Rear Shoulders)",
+                "Lower back (Erector Spinae)", "Brachialis (Forearm)", "Soleus (Lower Calf)"
+        };
+
+        muscleMap = new HashMap<>();
+        muscleMap.put("Biceps", 1);
+        muscleMap.put("Anterior deltoid (Front Shoulders)", 2);
+        muscleMap.put("Serratus anterior", 3);
+        muscleMap.put("Pectoralis major (Chest)", 4);
+        muscleMap.put("Triceps", 5);
+        muscleMap.put("Trapezius (Upper Back)", 6);
+        muscleMap.put("Quadriceps", 7);
+        muscleMap.put("Gastrocnemius (Calves)", 8);
+        muscleMap.put("Gluteus maximus (Glutes)", 9);
+        muscleMap.put("Hamstrings", 10);
+        muscleMap.put("Latissimus dorsi (Lats)", 11);
+        muscleMap.put("Obliques", 12);
+        muscleMap.put("Abdominals (Abs)", 13);
+        muscleMap.put("Posterior deltoid (Rear Shoulders)", 14);
+        muscleMap.put("Lower back (Erector Spinae)", 15);
+        muscleMap.put("Brachialis (Forearm)", 16);
+        muscleMap.put("Soleus (Lower Calf)", 17);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, muscleGroups);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerMuscleGroup.setAdapter(adapter);
+
+        spinnerMuscleGroup.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (isSpinnerInitialized) {
+                    String selectedMuscleGroup = (String) parent.getItemAtPosition(position);
+                    if (!selectedMuscleGroup.equals("Select Muscle Group")) {
+                        int muscleId = muscleMap.get(selectedMuscleGroup);
+                        fetchExercisesByMuscle(2, muscleId);
+                    } else {
+                        fetchExercises(2); // Fetch all exercises if no specific muscle group is selected
+                    }
+                } else {
+                    isSpinnerInitialized = true;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+    }
+
     private void fetchExercises(int language) {
         Call<ExerciseResponse> exerciseCall = api.getExercises(language);
         exerciseCall.enqueue(new Callback<ExerciseResponse>() {
@@ -72,7 +148,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Exercise> exercises = response.body().getExercises();
-                    fetchExerciseImages(exercises);
+                    exerciseAdapter = new ExerciseAdapterFilterable(exercises);
+                    recyclerView.setAdapter(exerciseAdapter); // Set the adapter here
                 } else {
                     Log.e("API Error", "Response unsuccessful or body is null");
                 }
@@ -92,7 +169,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Exercise> exercises = response.body().getExercises();
-                    fetchExerciseImages(exercises);
+                    exerciseAdapter = new ExerciseAdapterFilterable(exercises);
+                    recyclerView.setAdapter(exerciseAdapter); // Set the adapter here
                 } else {
                     Log.e("API Error", "Response unsuccessful or body is null");
                 }
@@ -102,24 +180,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onFailure(Call<ExerciseResponse> call, Throwable t) {
                 Log.e("API Error", "Failed to fetch exercises", t);
             }
+
         });
     }
-
-    private void fetchExerciseImages(List<Exercise> exercises) {
-        Call<ExerciseImageResponse> imageCall = api.getExerciseImages(true); // Main images
+    private void fetchExerciseImages(Exercise exercise) {
+        Call<ExerciseImageResponse> imageCall = api.getExerciseImages(exercise.getId());
         imageCall.enqueue(new Callback<ExerciseImageResponse>() {
             @Override
             public void onResponse(Call<ExerciseImageResponse> call, Response<ExerciseImageResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Map<Integer, String> exerciseImageMap = new HashMap<>();
-                    for (ExerciseImage image : response.body().getExerciseImages()) {
-                        exerciseImageMap.put(image.getExerciseId(), image.getImageUrl());
+                    List<ExerciseImage> images = response.body().getExerciseImages();
+                    if (!images.isEmpty()) {
+                        exercise.setImageUrl(images.get(0).getImageUrl());
                     }
-                    for (Exercise exercise : exercises) {
-                        exercise.setImageUrl(exerciseImageMap.get(exercise.getId()));
-                    }
-                    exerciseAdapter = new ExerciseAdapter(exercises);
-                    recyclerView.setAdapter(exerciseAdapter);
+                    exerciseAdapter.notifyDataSetChanged();
                 } else {
                     Log.e("API Error", "Response unsuccessful or body is null");
                 }
@@ -131,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.nav_home) {
@@ -144,10 +217,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GymFragment()).commit();
         } else if (item.getItemId() == R.id.nav_logout) {
             Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
-        } else if (item.getItemId() == R.id.nav_filter_muscle) {
-            // Example muscle group ID, replace with actual selection logic
-            int selectedMuscleId = 1;
-            fetchExercisesByMuscle(2, selectedMuscleId);
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

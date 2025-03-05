@@ -11,13 +11,14 @@ public class Exercise {
 
     private String imageUrl;
 
-    private String id;
+    private Integer id;
+    private String muscle;
 
     // Getters and setters
     public String getName() {
         return name;
     }
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -31,5 +32,18 @@ public class Exercise {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getMuscle() {
+        return muscle;
+    }
+
+    public void setMuscle(String muscle) {
+        this.muscle = muscle;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

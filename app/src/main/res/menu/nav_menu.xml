@@ -26,6 +26,7 @@
             android:id="@+id/nav_gym"
             android:icon="@drawable/baseline_sports_gymnastics_24"
             android:title="Find a Gym"/>
+
     </group>
     <item
         android:title="">
