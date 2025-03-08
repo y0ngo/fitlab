@@ -1,5 +1,8 @@
 package com.example.fitlab;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -69,17 +72,40 @@ public class WorkoutSummaryActivity extends AppCompatActivity {
                 if (workoutStarted) {
                     workoutStarted = false;
                     handler.removeCallbacks(timerRunnable);
-                    saveWorkoutSummary();
+                    showWorkoutSummaryDialog();
                 }
             }
         });
     }
 
-    private void saveWorkoutSummary() {
+    private void showWorkoutSummaryDialog() {
+        ArrayList<String> completedExercises = new ArrayList<>();
+        for (int i = 0; i < workoutListView.getCount(); i++) {
+            if (workoutListView.isItemChecked(i)) {
+                completedExercises.add((String) workoutListView.getItemAtPosition(i));
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Congratulations! You finished your workout");
+        builder.setMessage("Workout Summary:\n" + String.join("\n", completedExercises));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveWorkoutSummary(completedExercises);
+                Intent intent = new Intent(WorkoutSummaryActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        builder.show();
+    }
+
+    private void saveWorkoutSummary(ArrayList<String> completedExercises) {
         String filename = "workout_summary.json";
         StringBuilder workoutSummary = new StringBuilder();
         workoutSummary.append("{ \"workout\": [");
-        for (String exercise : addedExercises) {
+        for (String exercise : completedExercises) {
             workoutSummary.append("\"").append(exercise).append("\",");
         }
         workoutSummary.deleteCharAt(workoutSummary.length() - 1); // Remove last comma

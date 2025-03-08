@@ -85,6 +85,12 @@
                 app:menu="@menu/bottom_menu" />
 
         </com.google.android.material.bottomappbar.BottomAppBar>
+        <Button
+            android:id="@+id/find_gym"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Find a Gym" />
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"

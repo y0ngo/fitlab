@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -19,6 +20,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
@@ -54,6 +57,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 // Start SelectExerciseActivity
                 Intent intent = new Intent(MainActivity.this, SelectExerciseActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button findGym = findViewById(R.id.find_gym);
+        findGym.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FindGymActivity.class);
                 startActivity(intent);
             }
         });
@@ -213,8 +225,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
         } else if (item.getItemId() == R.id.nav_me) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MeFragment()).commit();
-        } else if (item.getItemId() == R.id.nav_gym) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new GymFragment()).commit();
+
         } else if (item.getItemId() == R.id.nav_logout) {
             Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
         }

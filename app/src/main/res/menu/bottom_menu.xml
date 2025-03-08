@@ -8,7 +8,7 @@
         android:icon="@drawable/baseline_home_24"/>
 
     <item
-        android:id="@+id/find_gym"
+        android:id="@+id/find_gym_menu"
         android:title="Find a Gym"
         android:icon="@drawable/baseline_sports_gymnastics_24"
         />
