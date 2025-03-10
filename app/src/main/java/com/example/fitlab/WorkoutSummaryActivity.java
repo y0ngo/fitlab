@@ -3,6 +3,7 @@ package com.example.fitlab;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -102,21 +103,16 @@ public class WorkoutSummaryActivity extends AppCompatActivity {
     }
 
     private void saveWorkoutSummary(ArrayList<String> completedExercises) {
-        String filename = "workout_summary.json";
         StringBuilder workoutSummary = new StringBuilder();
-        workoutSummary.append("{ \"workout\": [");
         for (String exercise : completedExercises) {
-            workoutSummary.append("\"").append(exercise).append("\",");
+            workoutSummary.append(exercise).append("\n");
         }
-        workoutSummary.deleteCharAt(workoutSummary.length() - 1); // Remove last comma
-        workoutSummary.append("]}");
 
-        try (FileOutputStream fos = openFileOutput(filename, MODE_PRIVATE)) {
-            fos.write(workoutSummary.toString().getBytes());
-            Toast.makeText(this, "Workout summary saved", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, "Failed to save workout summary", Toast.LENGTH_SHORT).show();
-        }
+        SharedPreferences sharedPreferences = getSharedPreferences("workout_summaries", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("summary_" + System.currentTimeMillis(), workoutSummary.toString());
+        editor.apply();
+
+        Toast.makeText(this, "Workout summary saved", Toast.LENGTH_SHORT).show();
     }
 }

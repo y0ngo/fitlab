@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.fitlab"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.fitlab"
@@ -45,6 +45,7 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation ("com.squareup.picasso:picasso:2.71828")
     implementation ("com.google.android.libraries.places:places:2.5.0")
+    implementation(libs.recyclerview)
 
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
 

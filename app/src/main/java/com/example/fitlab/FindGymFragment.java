@@ -6,14 +6,18 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -29,12 +33,10 @@ import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.api.net.PlacesStatusCodes;
-import com.google.android.material.bottomappbar.BottomAppBar;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class FindGymActivity extends AppCompatActivity {
+public class FindGymFragment extends Fragment {
 
     private static final int MAX_RETRIES = 3;
     private static final int RETRY_DELAY_MS = 2000;
@@ -47,25 +49,25 @@ public class FindGymActivity extends AppCompatActivity {
     private LocationCallback locationCallback;
     private int retryCount = 0;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_find_gym);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_find_gym, container, false);
 
-        gymListView = findViewById(R.id.gym_list_view);
+        gymListView = view.findViewById(R.id.gym_list_view);
         gymList = new ArrayList<>();
 
         // Initialize the Places API with your API key
-        Places.initialize(getApplicationContext(), "AIzaSyDJUI_2IL5Calbb44Pw4_7EsFsqEDI2f5M");
-        placesClient = Places.createClient(this);
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        Places.initialize(requireContext(), "AIzaSyDJUI_2IL5Calbb44Pw4_7EsFsqEDI2f5M");
+        placesClient = Places.createClient(requireContext());
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
         // Set up location callback
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
                 if (locationResult == null) {
-                    Toast.makeText(FindGymActivity.this, "Failed to get current location", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Failed to get current location", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 for (Location location : locationResult.getLocations()) {
@@ -77,22 +79,16 @@ public class FindGymActivity extends AppCompatActivity {
 
         // Fetch nearby gyms
         fetchCurrentLocation();
-        BottomAppBar bottomAppBar = findViewById(R.id.bottomAppBar);
-        setSupportActionBar(bottomAppBar);
 
-        FloatingActionButton fab = findViewById(R.id.add_workout_fab);
-        fab.setOnClickListener(view -> {
-            // Handle FAB click
-            Toast.makeText(FindGymActivity.this, "FAB clicked", Toast.LENGTH_SHORT).show();
-        });
+        return view;
     }
 
     private void fetchCurrentLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                Toast.makeText(this, "Location permission is needed to show nearby gyms", Toast.LENGTH_LONG).show();
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Toast.makeText(requireContext(), "Location permission is needed to show nearby gyms", Toast.LENGTH_LONG).show();
             }
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
         } else {
             requestLocationUpdates();
         }
@@ -104,7 +100,7 @@ public class FindGymActivity extends AppCompatActivity {
         locationRequest.setInterval(10000);
         locationRequest.setFastestInterval(5000);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
@@ -124,27 +120,33 @@ public class FindGymActivity extends AppCompatActivity {
                 .build();
 
         placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+            if (!isAdded()) {
+                return;
+            }
             gymList.clear();
             for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
                 gymList.add(prediction.getPrimaryText(null).toString() + "\n" + prediction.getSecondaryText(null).toString());
-                Log.d("FindGymActivity", "Gym found: " + prediction.getPrimaryText(null).toString());
+                Log.d("FindGymFragment", "Gym found: " + prediction.getPrimaryText(null).toString());
             }
             if (gymList.isEmpty()) {
-                Toast.makeText(this, "No gyms found nearby", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "No gyms found nearby", Toast.LENGTH_SHORT).show();
             } else {
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.gym_list_item, R.id.gym_name, gymList);
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.gym_list_item, R.id.gym_name, gymList);
                 gymListView.setAdapter(adapter);
             }
         }).addOnFailureListener((exception) -> {
+            if (!isAdded()) {
+                return;
+            }
             if (exception instanceof ApiException) {
                 ApiException apiException = (ApiException) exception;
                 if (apiException.getStatusCode() == PlacesStatusCodes.TIMEOUT && retryCount < MAX_RETRIES) {
                     retryCount++;
-                    Log.e("FindGymActivity", "Location timeout, retrying... (" + retryCount + "/" + MAX_RETRIES + ")");
+                    Log.e("FindGymFragment", "Location timeout, retrying... (" + retryCount + "/" + MAX_RETRIES + ")");
                     new Handler().postDelayed(() -> fetchNearbyGyms(currentLatLng), RETRY_DELAY_MS);
                 } else {
-                    Toast.makeText(this, "Failed to fetch gyms: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
-                    Log.e("FindGymActivity", "Error fetching gyms", exception);
+                    Toast.makeText(requireContext(), "Failed to fetch gyms: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e("FindGymFragment", "Error fetching gyms", exception);
                 }
             }
         });
@@ -157,7 +159,7 @@ public class FindGymActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 requestLocationUpdates();
             } else {
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
