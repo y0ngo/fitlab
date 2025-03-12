@@ -46,9 +46,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fabAddWorkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Start SelectExerciseActivity
-                Intent intent = new Intent(MainActivity.this, SelectExerciseActivity.class);
-                startActivity(intent);
+                SelectExerciseFragment fragment = new SelectExerciseFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .setReorderingAllowed(true)
+                        .addToBackStack(null) // Add to back stack to allow back navigation
+                        .commit();
             }
         });
 

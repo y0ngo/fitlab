@@ -6,20 +6,22 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
-public class WorkoutSummaryActivity extends AppCompatActivity {
+public class WorkoutSummaryFragment extends Fragment {
 
     private ListView workoutListView;
     private TextView timerTextView;
@@ -31,20 +33,22 @@ public class WorkoutSummaryActivity extends AppCompatActivity {
     private Runnable timerRunnable;
     private long startTime;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workout_summary);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_workout_summary, container, false);
 
-        workoutListView = findViewById(R.id.workout_list_view);
-        timerTextView = findViewById(R.id.timer_text_view);
-        startWorkoutButton = findViewById(R.id.start_workout_button);
-        finishWorkoutButton = findViewById(R.id.finish_workout_button);
+        workoutListView = view.findViewById(R.id.workout_list_view);
+        timerTextView = view.findViewById(R.id.timer_text_view);
+        startWorkoutButton = view.findViewById(R.id.start_workout_button);
+        finishWorkoutButton = view.findViewById(R.id.finish_workout_button);
 
-        addedExercises = getIntent().getStringArrayListExtra("addedExercises");
+        if (getArguments() != null) {
+            addedExercises = getArguments().getStringArrayList("addedExercises");
+        }
 
         if (addedExercises != null) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, addedExercises);
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_multiple_choice, addedExercises);
             workoutListView.setAdapter(adapter);
         }
 
@@ -77,6 +81,8 @@ public class WorkoutSummaryActivity extends AppCompatActivity {
                 }
             }
         });
+
+        return view;
     }
 
     private void showWorkoutSummaryDialog() {
@@ -87,16 +93,15 @@ public class WorkoutSummaryActivity extends AppCompatActivity {
             }
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Congratulations! You finished your workout");
         builder.setMessage("Workout Summary:\n" + String.join("\n", completedExercises));
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 saveWorkoutSummary(completedExercises);
-                Intent intent = new Intent(WorkoutSummaryActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                // Navigate back to MainActivity or another fragment
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
         builder.show();
@@ -108,11 +113,11 @@ public class WorkoutSummaryActivity extends AppCompatActivity {
             workoutSummary.append(exercise).append("\n");
         }
 
-        SharedPreferences sharedPreferences = getSharedPreferences("workout_summaries", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("workout_summaries", getContext().MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("summary_" + System.currentTimeMillis(), workoutSummary.toString());
         editor.apply();
 
-        Toast.makeText(this, "Workout summary saved", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Workout summary saved", Toast.LENGTH_SHORT).show();
     }
 }

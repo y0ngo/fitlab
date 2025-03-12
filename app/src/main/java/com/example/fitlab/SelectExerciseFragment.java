@@ -1,5 +1,6 @@
 package com.example.fitlab;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,64 +8,98 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HomeFragment extends Fragment {
-    private RecyclerView recyclerView;
-    private Spinner spinnerMuscleGroup;
-    private ExerciseAdapterFilterable exerciseAdapter;
+public class SelectExerciseFragment extends Fragment {
+
+    private TextView selectedExerciseTextView;
+    private EditText kgEditText;
+    private EditText repsEditText;
+    private EditText setsEditText;
+    private ListView exerciseListView;
+    private Button addExerciseButton;
+    private Button doneButton;
     private WgerApi api;
-    private Map<String, Integer> muscleMap;
+    private Exercise selectedExercise;
+    private List<String> addedExercises;
+    private Spinner spinnerMuscleGroup;
+    private HashMap<String, Integer> muscleMap;
     private boolean isSpinnerInitialized = false;
+    private RecyclerView recyclerView;
+    private ExerciseAdapterFilterable exerciseAdapter;
 
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_select_exercise, container, false);
 
-        // Initialize views
-        recyclerView = view.findViewById(R.id.recycler_view_exercises);
+        selectedExerciseTextView = view.findViewById(R.id.selected_exercise_text_view);
+        kgEditText = view.findViewById(R.id.kg_edit_text);
+        repsEditText = view.findViewById(R.id.reps_edit_text);
+        setsEditText = view.findViewById(R.id.sets_edit_text);
+        addExerciseButton = view.findViewById(R.id.add_exercise_button);
+        doneButton = view.findViewById(R.id.done_button);
         spinnerMuscleGroup = view.findViewById(R.id.spinner_muscle_group);
+        recyclerView = view.findViewById(R.id.recycler_view_exercises);
+        addedExercises = new ArrayList<>();
 
-        // Setup RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Setup Spinner
-        setupMuscleGroupSpinner();
-
-        // Initialize Retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://wger.de/api/v2/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        api = retrofit.create(WgerApi.class);
 
-        // Fetch exercises
-        fetchExercises(2); // Default to English exercises
+        api = retrofit.create(WgerApi.class);
+        fetchExercises(2);
+        setupMuscleGroupSpinner();
+
+        addExerciseButton.setOnClickListener(v -> {
+            if (selectedExercise != null) {
+                String kg = kgEditText.getText().toString();
+                String reps = repsEditText.getText().toString();
+                String sets = setsEditText.getText().toString();
+
+                String exerciseDetails = selectedExercise.getName() + " - " + kg + "kg, " + reps + " reps, " + sets + " sets";
+                addedExercises.add(exerciseDetails);
+                Toast.makeText(getContext(), "Exercise added: " + exerciseDetails, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), "Please select an exercise", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        doneButton.setOnClickListener(v -> {
+            WorkoutSummaryFragment fragment = new WorkoutSummaryFragment();
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, fragment)
+                    .setReorderingAllowed(true)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         return view;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (getActivity() != null) {
-            getActivity().setTitle("Home");
-        }
-    }
-
     private void setupMuscleGroupSpinner() {
         String[] muscleGroups = {
                 "Select Muscle Group", "Biceps", "Anterior deltoid (Front Shoulders)", "Serratus anterior", "Pectoralis major (Chest)",
@@ -127,7 +162,8 @@ public class HomeFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Exercise> exercises = response.body().getExercises();
                     exerciseAdapter = new ExerciseAdapterFilterable(exercises, exercise -> {
-                        // Handle exercise click
+                        selectedExercise = exercise;
+                        selectedExerciseTextView.setText("Selected: " + exercise.getName());
                     });
                     recyclerView.setAdapter(exerciseAdapter);
                 } else {
@@ -142,26 +178,27 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void fetchExercisesByMuscle(int language, int muscleId) {
-        Call<ExerciseResponse> exerciseCall = api.getExercisesByMuscle(language, muscleId);
-        exerciseCall.enqueue(new Callback<ExerciseResponse>() {
-            @Override
-            public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<Exercise> exercises = response.body().getExercises();
-                    exerciseAdapter = new ExerciseAdapterFilterable(exercises, exercise -> {
-                        // Handle exercise click
-                    });
-                    recyclerView.setAdapter(exerciseAdapter);
-                } else {
-                    Log.e("API Error", "Response unsuccessful or body is null");
-                }
-            }
+   private void fetchExercisesByMuscle(int language, int muscleId) {
+       Call<ExerciseResponse> exerciseCall = api.getExercisesByMuscle(language, muscleId);
+       exerciseCall.enqueue(new Callback<ExerciseResponse>() {
+           @Override
+           public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
+               if (response.isSuccessful() && response.body() != null) {
+                   List<Exercise> exercises = response.body().getExercises();
+                   exerciseAdapter = new ExerciseAdapterFilterable(exercises, exercise -> {
+                       selectedExercise = exercise;
+                       selectedExerciseTextView.setText("Selected: " + exercise.getName());
+                   });
+                   recyclerView.setAdapter(exerciseAdapter);
+               } else {
+                   Log.e("API Error", "Response unsuccessful or body is null");
+               }
+           }
 
-            @Override
-            public void onFailure(Call<ExerciseResponse> call, Throwable t) {
-                Log.e("API Error", "Failed to fetch exercises", t);
-            }
-        });
-    }
+           @Override
+           public void onFailure(Call<ExerciseResponse> call, Throwable t) {
+               Log.e("API Error", "Failed to fetch exercises", t);
+           }
+       });
+   }
 }

@@ -16,13 +16,16 @@ import com.example.fitlab.Exercise;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdapterFilterable.ExerciseViewHolder> implements Filterable {
+public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdapterFilterable.ExerciseViewHolder> {
     private List<Exercise> originalList;
     private List<Exercise> filteredList;
+    private int selectedPosition = RecyclerView.NO_POSITION;
+    private OnExerciseClickListener onExerciseClickListener;
 
-    public ExerciseAdapterFilterable(List<Exercise> exercises) {
+    public ExerciseAdapterFilterable(List<Exercise> exercises, OnExerciseClickListener listener) {
         this.originalList = exercises;
         this.filteredList = new ArrayList<>(exercises);
+        this.onExerciseClickListener = listener;
     }
 
     @Override
@@ -31,34 +34,42 @@ public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdap
         return new ExerciseViewHolder(view);
     }
 
-    // Existing code...
-
     @Override
     public void onBindViewHolder(ExerciseViewHolder holder, int position) {
         Exercise exercise = filteredList.get(position);
         holder.exerciseName.setText(exercise.getName());
         holder.exerciseDescription.setText(exercise.getDescription());
-        // Load the image using Glide
-        Glide.with(holder.itemView.getContext()).load(exercise.getImageUrl()).into(holder.exerciseImage);
+
+        holder.itemView.setSelected(selectedPosition == position);
+        holder.itemView.setOnClickListener(v -> {
+            notifyItemChanged(selectedPosition);
+            selectedPosition = holder.getAdapterPosition();
+            notifyItemChanged(selectedPosition);
+            onExerciseClickListener.onExerciseClick(exercise);
+        });
     }
 
-    public static class ExerciseViewHolder extends RecyclerView.ViewHolder {
-        TextView exerciseName, exerciseDescription;
-        ImageView exerciseImage; // Add this field
-
-        public ExerciseViewHolder(View itemView) {
-            super(itemView);
-            exerciseName = itemView.findViewById(R.id.exerciseName);
-            exerciseDescription = itemView.findViewById(R.id.exerciseDescription);
-            exerciseImage = itemView.findViewById(R.id.exerciseImage); // Initialize this field
-        }
-    }
     @Override
     public int getItemCount() {
         return filteredList.size();
     }
 
-    @Override
+    public static class ExerciseViewHolder extends RecyclerView.ViewHolder {
+        TextView exerciseName, exerciseDescription;
+
+        public ExerciseViewHolder(View itemView) {
+            super(itemView);
+            exerciseName = itemView.findViewById(R.id.exerciseName);
+            exerciseDescription = itemView.findViewById(R.id.exerciseDescription);
+        }
+    }
+
+    public interface OnExerciseClickListener {
+        void onExerciseClick(Exercise exercise);
+    }
+
+
+
     public Filter getFilter() {
         return new Filter() {
             @Override

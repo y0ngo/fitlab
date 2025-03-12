@@ -30,7 +30,7 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
         Exercise exercise = exerciseList.get(position);
         holder.exerciseName.setText(exercise.getName());
         holder.exerciseDescription.setText(exercise.getDescription());
-        Glide.with(holder.itemView.getContext()).load(exercise.getImageUrl()).into(holder.exerciseImage);
+  ;
     }
 
     @Override
@@ -40,13 +40,13 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
 
     public static class ExerciseViewHolder extends RecyclerView.ViewHolder {
         TextView exerciseName, exerciseDescription;
-        ImageView exerciseImage;
+
 
         public ExerciseViewHolder(@NonNull View itemView) {
             super(itemView);
             exerciseName = itemView.findViewById(R.id.exerciseName);
             exerciseDescription = itemView.findViewById(R.id.exerciseDescription);
-            exerciseImage = itemView.findViewById(R.id.exerciseImage);
+
         }
     }
 }
