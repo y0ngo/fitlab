@@ -55,8 +55,8 @@
                         android:src="@drawable/baseline_person_24"
                         android:background="@color/primary_light"
                         android:padding="16dp"
-                        android:tint="@color/white"
-                        android:contentDescription="Profile" />
+                        android:contentDescription="Profile"
+                        app:tint="@color/white" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <LinearLayout
@@ -293,8 +293,8 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/baseline_settings_24"
-                            android:tint="@color/primary"
-                            android:contentDescription="Settings" />
+                            android:contentDescription="Settings"
+                            app:tint="@color/primary" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -309,8 +309,8 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/baseline_clear_24"
-                            android:tint="@color/text_tertiary"
-                            android:contentDescription="Arrow" />
+                            android:contentDescription="Arrow"
+                            app:tint="@color/text_tertiary" />
                     </LinearLayout>
 
                     <View
@@ -333,14 +333,14 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/baseline_email_24"
-                            android:tint="@color/primary"
-                            android:contentDescription="Help" />
+                            android:contentDescription="Help"
+                            app:tint="@color/primary" />
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Help & Support"
+                            android:text="Help and Support"
                             android:textSize="16sp"
                             android:textColor="@color/text_primary"
                             android:layout_marginStart="16dp" />
@@ -349,8 +349,8 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/baseline_clear_24"
-                            android:tint="@color/text_tertiary"
-                            android:contentDescription="Arrow" />
+                            android:contentDescription="Arrow"
+                            app:tint="@color/text_tertiary" />
                     </LinearLayout>
 
                     <View
@@ -373,8 +373,8 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/baseline_logout_24"
-                            android:tint="@color/error"
-                            android:contentDescription="Logout" />
+                            android:contentDescription="Logout"
+                            app:tint="@color/error" />
 
                         <TextView
                             android:layout_width="0dp"
