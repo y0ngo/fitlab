@@ -1,12 +1,24 @@
 <resources>
-    <string name="app_name">fitlab</string>
+    <string name="app_name">FitLab</string>
     <string name="open_nav">Open Navigation Drawer</string>
     <string name="close_nav">Close Navigation Drawer</string>
     <string-array name="fitness_goals">
         <item>Improve cardiovascular endurance</item>
         <item>Get stronger</item>
         <item>Tone up</item>
+        <item>Lose weight</item>
+        <item>Build muscle</item>
+        <item>Improve flexibility</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string-array name="muscle_groups">
+        <item>All</item>
+        <item>Chest</item>
+        <item>Back</item>
+        <item>Legs</item>
+        <item>Arms</item>
+        <item>Shoulders</item>
+        <item>Core</item>
+    </string-array>
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
+

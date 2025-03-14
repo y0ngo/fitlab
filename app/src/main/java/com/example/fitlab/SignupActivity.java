@@ -84,7 +84,7 @@ public class SignupActivity extends AppCompatActivity {
 
         // Replace the current fragment with the new one
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment)
+                .replace(R.id.fragmentContainer, fragment)
                 .setReorderingAllowed(true)
                 .commit(); // Use commit() instead of addToBackStack(null)
     }

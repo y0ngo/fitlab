@@ -2,42 +2,47 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn = "navigation_view">
+    tools:showIn="navigation_view">
 
-    <group
-        android:checkableBehavior="single">
-
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/baseline_home_24"
             android:title="Home"/>
 
         <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/baseline_settings_24"
-            android:title="Settings"/>
-
-        <item
-            android:id="@+id/nav_me"
+            android:id="@+id/nav_profile"
             android:icon="@drawable/baseline_person_24"
-            android:title="My Personal details"/>
+            android:title="My Profile"/>
+            
+        <item
+            android:id="@+id/nav_workouts"
+            android:icon="@drawable/ic_workout"
+            android:title="My Workouts"/>
 
         <item
             android:id="@+id/nav_gym"
             android:icon="@drawable/baseline_sports_gymnastics_24"
             android:title="Find a Gym"/>
-
+            
+        <item
+            android:id="@+id/nav_stats"
+            android:icon="@drawable/ic_stats"
+            android:title="Statistics"/>
+            
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/baseline_settings_24"
+            android:title="Settings"/>
     </group>
-    <item
-        android:title="">
-
+    
+    <item android:title="Account">
         <menu>
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/baseline_logout_24"
                 android:title="Logout"/>
         </menu>
-
     </item>
-
 </menu>
+

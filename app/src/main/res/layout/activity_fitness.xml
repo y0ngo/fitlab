@@ -1,67 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background">
+    android:background="@drawable/background_gradient">
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        android:src="@drawable/baseline_clear_24"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Back"
+        app:tint="@color/white" />
 
     <TextView
         android:id="@+id/fitnessTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enter your details"
-        android:textColor="@color/white"
+        android:layout_marginTop="60dp"
         android:gravity="center"
-        android:textSize="35dp"
+        android:text="Your Fitness Profile"
+        android:textColor="@color/white"
+        android:textSize="28sp"
         android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/height"
+    <TextView
+        android:id="@+id/fitnessSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/fitnessTitle"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Help us personalize your experience"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="20dp"
-        android:background="#30ffffff"
-        android:ems="10"
-        android:hint="Enter your Height in centimeters"
-        android:inputType="text"
-        android:drawableLeft="@drawable/baseline_person_24"
-        android:drawablePadding="10dp" />
+        android:layout_below="@id/fitnessSubtitle"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp">
 
-    <EditText
-        android:id="@+id/weight"
-        android:layout_below="@id/height"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:padding="20dp"
-        android:background="#30ffffff"
-        android:ems="10"
-        android:hint="Enter your weight in kilograms"
-        android:inputType="text"
-        android:drawableLeft="@drawable/baseline_person_24"
-        android:drawablePadding="10dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
 
-    <Spinner
-        android:id="@+id/fitnessGoalSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/weight"
-        android:layout_margin="10dp"
-        android:background="#30ffffff"
-        android:padding="20dp" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Height (cm)"
+                app:startIconDrawable="@drawable/baseline_person_24"
+                style="@style/Widget.Fitlab.TextInputLayout">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/saveDetailsButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#30ffffff"
-        android:text="Save Details"
-        android:textSize="25dp"
-        android:layout_below="@id/fitnessGoalSpinner"
-        android:layout_centerHorizontal="true"
-        android:backgroundTint="@color/design_default_color_secondary"
-        android:layout_margin="20dp" />
-</RelativeLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/height"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Weight (kg)"
+                app:startIconDrawable="@drawable/baseline_person_24"
+                style="@style/Widget.Fitlab.TextInputLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/weight"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Fitness Goal"
+                android:textColor="@color/text_primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="8dp"
+                app:strokeColor="@color/primary"
+                app:strokeWidth="1dp">
+
+                <Spinner
+                    android:id="@+id/fitnessGoalSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="12dp"
+                    android:background="@null" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com  />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/saveDetailsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:paddingVertical="12dp"
+                android:text="Save Details"
+                android:textAllCaps="false"
+                android:textSize="16sp"
+                app:cornerRadius="8dp" />
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+
+

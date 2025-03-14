@@ -7,3 +7,4 @@
         android:title="Filter by Muscle"
         android:icon="@drawable/baseline_filter_list_24" />
 </menu>
+

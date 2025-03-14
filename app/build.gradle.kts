@@ -38,6 +38,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    
+    
     implementation(libs.firebase.auth)
     implementation("com.google.firebase:firebase-firestore:25.1.1")
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
