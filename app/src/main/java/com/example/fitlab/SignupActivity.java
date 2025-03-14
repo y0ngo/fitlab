@@ -7,6 +7,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -65,7 +67,7 @@ public class SignupActivity extends AppCompatActivity {
                                 .set(userData)
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(this, "Signup successful!", Toast.LENGTH_SHORT).show();
-                                    navigateToFitnessDetailsPage();
+                                    replaceFragment(new HomeFragment());
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(this, "Error saving data", Toast.LENGTH_SHORT).show();
@@ -76,8 +78,14 @@ public class SignupActivity extends AppCompatActivity {
                 });
     }
 
-    private void navigateToFitnessDetailsPage() {
-        Intent intent = new Intent(this, FitnessDetailsActivity.class);
-        startActivity(intent);
+    private void replaceFragment(Fragment fragment) {
+        // Clear the back stack to ensure no fragments are lingering
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+        // Replace the current fragment with the new one
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .setReorderingAllowed(true)
+                .commit(); // Use commit() instead of addToBackStack(null)
     }
 }

@@ -2,7 +2,6 @@ package com.example.fitlab;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,7 +18,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WorkoutSummaryFragment extends Fragment {
 
@@ -33,6 +38,9 @@ public class WorkoutSummaryFragment extends Fragment {
     private Runnable timerRunnable;
     private long startTime;
 
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,6 +50,9 @@ public class WorkoutSummaryFragment extends Fragment {
         timerTextView = view.findViewById(R.id.timer_text_view);
         startWorkoutButton = view.findViewById(R.id.start_workout_button);
         finishWorkoutButton = view.findViewById(R.id.finish_workout_button);
+
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         if (getArguments() != null) {
             addedExercises = getArguments().getStringArrayList("addedExercises");
@@ -108,16 +119,23 @@ public class WorkoutSummaryFragment extends Fragment {
     }
 
     private void saveWorkoutSummary(ArrayList<String> completedExercises) {
-        StringBuilder workoutSummary = new StringBuilder();
-        for (String exercise : completedExercises) {
-            workoutSummary.append(exercise).append("\n");
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+            Map<String, Object> workoutSummary = new HashMap<>();
+            workoutSummary.put("userId", userId);
+            workoutSummary.put("completedExercises", completedExercises);
+            workoutSummary.put("timestamp", System.currentTimeMillis());
+
+            db.collection("workout_summaries").add(workoutSummary)
+                    .addOnSuccessListener(documentReference -> {
+                        Toast.makeText(getContext(), "Workout summary saved", Toast.LENGTH_SHORT).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(getContext(), "Error saving workout summary", Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
         }
-
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("workout_summaries", getContext().MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("summary_" + System.currentTimeMillis(), workoutSummary.toString());
-        editor.apply();
-
-        Toast.makeText(getContext(), "Workout summary saved", Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,6 +1,5 @@
 package com.example.fitlab;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,19 +10,21 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fitlab.R;
-import com.example.fitlab.Workout;
-import com.example.fitlab.WorkoutAdapter;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ActivityFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private WorkoutAdapter workoutAdapter;
     private List<Workout> workoutList;
+    private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
 
     @Nullable
     @Override
@@ -38,6 +39,10 @@ public class ActivityFragment extends Fragment {
         workoutAdapter = new WorkoutAdapter(workoutList);
         recyclerView.setAdapter(workoutAdapter);
 
+        // Initialize Firebase Firestore and Auth
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+
         // Load previous workouts
         loadPreviousWorkouts();
 
@@ -45,11 +50,25 @@ public class ActivityFragment extends Fragment {
     }
 
     private void loadPreviousWorkouts() {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("workout_summaries", getContext().MODE_PRIVATE);
-        Map<String, ?> allEntries = sharedPreferences.getAll();
-        for (Map.Entry<String, ?> entry : allEntries.entrySet()) {
-            workoutList.add(new Workout(entry.getKey(), entry.getValue().toString()));
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            String userId = user.getUid();
+            db.collection("workout_summaries")
+                    .whereEqualTo("userId", userId)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            workoutList.clear();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                String title = document.getId();
+                                String description = document.getString("completedExercises");
+                                workoutList.add(new Workout(title, description));
+                            }
+                            workoutAdapter.notifyDataSetChanged();
+                        } else {
+                            // Handle the error
+                        }
+                    });
         }
-        workoutAdapter.notifyDataSetChanged();
     }
 }
