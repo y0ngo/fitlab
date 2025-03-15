@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
@@ -41,6 +42,7 @@ public class HomeFragment extends Fragment {
         recyclerView = view.findViewById(R.id.recycler_view_exercises);
         spinnerMuscleGroup = view.findViewById(R.id.spinner_muscle_group);
         youTubePlayerView = view.findViewById(R.id.youtube_player_view);
+        ImageView locationPin = view.findViewById(R.id.location_pin);
 
         // Setup RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -67,6 +69,12 @@ public class HomeFragment extends Fragment {
                 youTubePlayer.cueVideo(videoId, 0);
             }
         });
+        locationPin.setOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).replaceFragment(new FindGymFragment());
+            }
+        });
+
 
         return view;
     }

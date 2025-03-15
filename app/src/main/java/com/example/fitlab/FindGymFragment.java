@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -42,7 +43,7 @@ public class FindGymFragment extends Fragment {
     private static final int RETRY_DELAY_MS = 2000;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-    private ListView gymListView;
+    private RecyclerView gymListView;
     private ArrayList<String> gymList;
     private PlacesClient placesClient;
     private FusedLocationProviderClient fusedLocationClient;
@@ -131,7 +132,7 @@ public class FindGymFragment extends Fragment {
             if (gymList.isEmpty()) {
                 Toast.makeText(requireContext(), "No gyms found nearby", Toast.LENGTH_SHORT).show();
             } else {
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.gym_list_item, R.id.gym_name, gymList);
+                GymAdapter adapter = new GymAdapter(gymList);
                 gymListView.setAdapter(adapter);
             }
         }).addOnFailureListener((exception) -> {

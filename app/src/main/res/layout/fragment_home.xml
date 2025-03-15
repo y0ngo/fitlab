@@ -32,6 +32,15 @@
                 android:contentDescription="FitLab Logo" />
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
+    <ImageView
+        android:id="@+id/location_pin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/baseline_location_pin_24"
+        android:layout_margin="16dp"
+
+        android:clickable="true"
+        android:focusable="true" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

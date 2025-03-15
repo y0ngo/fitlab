@@ -52,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.activity) {
                     replaceFragment(new ActivityFragment());
                     return true;
-//                } else if (itemId == R.id.profile) {
-//                    replaceFragment(new ProfileFragment());
-//                    return true;
+                } else if (itemId == R.id.profile) {
+                    replaceFragment(new FindGymFragment());
+                    return true;
                 } else {
                     return false;
                 }
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // Helper method to replace fragments in the container
-    private void replaceFragment(Fragment fragment) {
+    void replaceFragment(Fragment fragment) {
         // Optional: clear the back stack if necessary
         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 
