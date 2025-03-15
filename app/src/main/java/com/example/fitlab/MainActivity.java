@@ -46,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.workouts) {
                     replaceFragment(new WorkoutsFragment());
                     return true;
-//                } else if (itemId == R.id.tutorials) {
-//                    replaceFragment(new TutorialsFragment());
-//                    return true;
+                } else if (itemId == R.id.tutorials) {
+                    replaceFragment(new TutorialFragment());
+                    return true;
                 } else if (itemId == R.id.activity) {
                     replaceFragment(new ActivityFragment());
                     return true;

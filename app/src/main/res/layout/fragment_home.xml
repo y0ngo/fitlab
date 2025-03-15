@@ -123,6 +123,8 @@
                 android:textColor="@color/text_primary"
                 android:layout_marginTop="24dp" />
 
+
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -142,13 +144,12 @@
                         android:layout_height="200dp"
                         android:background="@color/background_dark">
 
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/baseline_add_24"
-                            android:tint="@color/primary"
-                            android:contentDescription="Play Video" />
+                        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+                            android:id="@+id/youtube_player_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_marginTop="8dp" />
+
                     </FrameLayout>
 
                     <LinearLayout

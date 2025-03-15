@@ -47,6 +47,10 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation ("com.squareup.picasso:picasso:2.71828")
     implementation ("com.google.android.libraries.places:places:2.5.0")
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:11.1.0")
+    implementation ("com.google.android.gms:play-services-auth:20.7.0")
+    implementation ("com.google.android.gms:play-services-base:18.1.0")
+    implementation ("com.google.android.gms:play-services-identity:17.0.0")
     implementation(libs.recyclerview)
 
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")

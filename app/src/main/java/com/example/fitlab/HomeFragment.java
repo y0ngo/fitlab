@@ -1,19 +1,20 @@
 package com.example.fitlab;
 
-import static com.example.fitlab.R.id.recycler_view_exercises;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,15 +31,16 @@ public class HomeFragment extends Fragment {
     private WgerApi api;
     private Map<String, Integer> muscleMap;
     private boolean isSpinnerInitialized = false;
+    private YouTubePlayerView youTubePlayerView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         // Initialize views
-        recyclerView = view.findViewById(recycler_view_exercises);
+        recyclerView = view.findViewById(R.id.recycler_view_exercises);
         spinnerMuscleGroup = view.findViewById(R.id.spinner_muscle_group);
+        youTubePlayerView = view.findViewById(R.id.youtube_player_view);
 
         // Setup RecyclerView
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -55,6 +57,16 @@ public class HomeFragment extends Fragment {
 
         // Fetch exercises
         fetchExercises(2); // Default to English exercises
+
+        // Initialize YouTube Player
+        getLifecycle().addObserver(youTubePlayerView);
+        youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                String videoId = "gcNh17Ckjgg";
+                youTubePlayer.cueVideo(videoId, 0);
+            }
+        });
 
         return view;
     }
