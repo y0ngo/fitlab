@@ -92,7 +92,7 @@ public class SelectExerciseFragment extends Fragment {
         doneButton.setOnClickListener(v -> {
             WorkoutSummaryFragment fragment = new WorkoutSummaryFragment();
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
+                    .replace(R.id.fragmentContainer, fragment)
                     .setReorderingAllowed(true)
                     .addToBackStack(null)
                     .commit();

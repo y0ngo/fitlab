@@ -1,5 +1,7 @@
 package com.example.fitlab;
 
+import static com.example.fitlab.R.id.recycler_view_exercises;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,7 +37,7 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         // Initialize views
-        recyclerView = view.findViewById(R.id.recycler_view_exercises);
+        recyclerView = view.findViewById(recycler_view_exercises);
         spinnerMuscleGroup = view.findViewById(R.id.spinner_muscle_group);
 
         // Setup RecyclerView
