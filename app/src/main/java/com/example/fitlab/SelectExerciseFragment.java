@@ -1,6 +1,5 @@
 package com.example.fitlab;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,17 +35,16 @@ public class SelectExerciseFragment extends Fragment {
     private EditText kgEditText;
     private EditText repsEditText;
     private EditText setsEditText;
-    private ListView exerciseListView;
     private Button addExerciseButton;
     private Button doneButton;
+    private Spinner spinnerMuscleGroup;
+    private RecyclerView recyclerView;
+    private ExerciseAdapterFilterable exerciseAdapter;
     private WgerApi api;
     private Exercise selectedExercise;
     private List<String> addedExercises;
-    private Spinner spinnerMuscleGroup;
     private HashMap<String, Integer> muscleMap;
     private boolean isSpinnerInitialized = false;
-    private RecyclerView recyclerView;
-    private ExerciseAdapterFilterable exerciseAdapter;
 
     @Nullable
     @Override
@@ -90,7 +87,10 @@ public class SelectExerciseFragment extends Fragment {
         });
 
         doneButton.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("addedExercises", new ArrayList<>(addedExercises));
             WorkoutSummaryFragment fragment = new WorkoutSummaryFragment();
+            fragment.setArguments(bundle);
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, fragment)
                     .setReorderingAllowed(true)
@@ -100,6 +100,7 @@ public class SelectExerciseFragment extends Fragment {
 
         return view;
     }
+
     private void setupMuscleGroupSpinner() {
         String[] muscleGroups = {
                 "Select Muscle Group", "Biceps", "Anterior deltoid (Front Shoulders)", "Serratus anterior", "Pectoralis major (Chest)",
@@ -153,7 +154,9 @@ public class SelectExerciseFragment extends Fragment {
             }
         });
     }
-
+    public String removeHtmlTags(String input) {
+        return input.replaceAll("<[^>]*>", "");
+    }
     private void fetchExercises(int language) {
         Call<ExerciseResponse> exerciseCall = api.getExercises(language);
         exerciseCall.enqueue(new Callback<ExerciseResponse>() {
@@ -161,6 +164,10 @@ public class SelectExerciseFragment extends Fragment {
             public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Exercise> exercises = response.body().getExercises();
+                    for (Exercise exercise : exercises) {
+                        exercise.setName(removeHtmlTags(exercise.getName()));
+                        exercise.setDescription(removeHtmlTags(exercise.getDescription()));
+                    }
                     exerciseAdapter = new ExerciseAdapterFilterable(exercises, exercise -> {
                         selectedExercise = exercise;
                         selectedExerciseTextView.setText("Selected: " + exercise.getName());
@@ -178,27 +185,30 @@ public class SelectExerciseFragment extends Fragment {
         });
     }
 
-   private void fetchExercisesByMuscle(int language, int muscleId) {
-       Call<ExerciseResponse> exerciseCall = api.getExercisesByMuscle(language, muscleId);
-       exerciseCall.enqueue(new Callback<ExerciseResponse>() {
-           @Override
-           public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
-               if (response.isSuccessful() && response.body() != null) {
-                   List<Exercise> exercises = response.body().getExercises();
-                   exerciseAdapter = new ExerciseAdapterFilterable(exercises, exercise -> {
-                       selectedExercise = exercise;
-                       selectedExerciseTextView.setText("Selected: " + exercise.getName());
-                   });
-                   recyclerView.setAdapter(exerciseAdapter);
-               } else {
-                   Log.e("API Error", "Response unsuccessful or body is null");
-               }
-           }
+    private void fetchExercisesByMuscle(int language, int muscleId) {
+        Call<ExerciseResponse> exerciseCall = api.getExercisesByMuscle(language, muscleId);
+        exerciseCall.enqueue(new Callback<ExerciseResponse>() {
+            @Override
+            public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<Exercise> exercises = response.body().getExercises();
+                    for (Exercise exercise : exercises) {
+                        exercise.setName(removeHtmlTags(exercise.getName()));
+                        exercise.setDescription(removeHtmlTags(exercise.getDescription()));
+                    }
+                    exerciseAdapter = new ExerciseAdapterFilterable(exercises, exercise -> {
+                        selectedExercise = exercise;
+                        selectedExerciseTextView.setText("Selected: " + exercise.getName());
+                    });
+                    recyclerView.setAdapter(exerciseAdapter);
+                } else {
+                    Log.e("API Error", "Response unsuccessful or body is null");
+                }
+            }
 
-           @Override
-           public void onFailure(Call<ExerciseResponse> call, Throwable t) {
-               Log.e("API Error", "Failed to fetch exercises", t);
-           }
-       });
-   }
-}
+            @Override
+            public void onFailure(Call<ExerciseResponse> call, Throwable t) {
+                Log.e("API Error", "Failed to fetch exercises", t);
+            }
+        });
+    }}

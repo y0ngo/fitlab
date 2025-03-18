@@ -18,6 +18,16 @@ public class Exercise {
     public String getName() {
         return name;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
     public Integer getId() {
         return id;
     }

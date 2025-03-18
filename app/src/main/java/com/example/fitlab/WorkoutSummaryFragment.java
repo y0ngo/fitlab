@@ -2,7 +2,6 @@ package com.example.fitlab;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -61,6 +60,7 @@ public class WorkoutSummaryFragment extends Fragment {
         if (addedExercises != null) {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_multiple_choice, addedExercises);
             workoutListView.setAdapter(adapter);
+            workoutListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         }
 
         startWorkoutButton.setOnClickListener(new View.OnClickListener() {

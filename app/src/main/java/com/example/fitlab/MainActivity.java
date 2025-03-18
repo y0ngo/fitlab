@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
                 if (itemId == R.id.home) {
                     replaceFragment(new HomeFragment());
                     return true;
-                } else if (itemId == R.id.workouts) {
-                    replaceFragment(new WorkoutsFragment());
+                } else if (itemId == R.id.profile) {
+                    replaceFragment(new ProfileFragment());
                     return true;
                 } else if (itemId == R.id.tutorials) {
                     replaceFragment(new TutorialFragment());
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (itemId == R.id.activity) {
                     replaceFragment(new ActivityFragment());
                     return true;
-                } else if (itemId == R.id.profile) {
+                } else if (itemId == R.id.find_gym) {
                     replaceFragment(new FindGymFragment());
                     return true;
                 } else {

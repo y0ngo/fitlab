@@ -136,6 +136,9 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+    public String removeHtmlTags(String input) {
+        return input.replaceAll("<[^>]*>", "");
+    }
 
     private void fetchExercises(int language) {
         Call<ExerciseResponse> exerciseCall = api.getExercises(language);

@@ -8,9 +8,9 @@
         android:icon="@drawable/baseline_home_24"/>
 
     <item
-        android:id="@+id/workouts"
-        android:title="Workouts"
-        android:icon="@drawable/ic_dumbbell"/>
+        android:id="@+id/find_gym"
+        android:title="Find Gym"
+        android:icon="@drawable/baseline_location_pin_24"/>
 
     <item
         android:id="@+id/tutorials"

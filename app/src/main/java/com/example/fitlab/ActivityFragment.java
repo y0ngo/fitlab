@@ -61,8 +61,8 @@ public class ActivityFragment extends Fragment {
                             workoutList.clear();
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 String title = document.getId();
-                                String description = document.getString("completedExercises");
-                                workoutList.add(new Workout(title, description));
+                                List<String> completedExercises = (List<String>) document.get("completedExercises");
+                                workoutList.add(new Workout(title, completedExercises.toString()));
                             }
                             workoutAdapter.notifyDataSetChanged();
                         } else {
