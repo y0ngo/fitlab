@@ -1,7 +1,5 @@
 package com.example.fitlab;
 
-
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,7 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
 
     private List<Workout> workoutList;
 
+    // Constructor accepts a list of workouts
     public WorkoutAdapter(List<Workout> workoutList) {
         this.workoutList = workoutList;
     }
