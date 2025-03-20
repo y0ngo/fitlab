@@ -12,7 +12,6 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
 
     private List<Workout> workoutList;
 
-    // Constructor accepts a list of workouts
     public WorkoutAdapter(List<Workout> workoutList) {
         this.workoutList = workoutList;
     }
@@ -27,8 +26,9 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
     @Override
     public void onBindViewHolder(@NonNull WorkoutViewHolder holder, int position) {
         Workout workout = workoutList.get(position);
-        holder.titleTextView.setText(workout.getTitle());
-        holder.descriptionTextView.setText(workout.getDescription());
+        holder.dateTextView.setText(workout.getDate());
+        holder.timestampTextView.setText(workout.getTimestamp());
+        holder.completedExercisesTextView.setText(String.join(", ", workout.getCompletedExercises()));
     }
 
     @Override
@@ -37,13 +37,15 @@ public class WorkoutAdapter extends RecyclerView.Adapter<WorkoutAdapter.WorkoutV
     }
 
     public static class WorkoutViewHolder extends RecyclerView.ViewHolder {
-        TextView titleTextView;
-        TextView descriptionTextView;
+        TextView dateTextView;
+        TextView timestampTextView;
+        TextView completedExercisesTextView;
 
         public WorkoutViewHolder(@NonNull View itemView) {
             super(itemView);
-            titleTextView = itemView.findViewById(R.id.workout_title);
-            descriptionTextView = itemView.findViewById(R.id.workout_description);
+            dateTextView = itemView.findViewById(R.id.workout_date);
+            timestampTextView = itemView.findViewById(R.id.workout_timestamp);
+            completedExercisesTextView = itemView.findViewById(R.id.workout_completed_exercises);
         }
     }
 }

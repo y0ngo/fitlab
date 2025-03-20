@@ -1,9 +1,11 @@
 package com.example.fitlab;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +23,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class WorkoutSummaryFragment extends Fragment {
@@ -127,15 +132,35 @@ public class WorkoutSummaryFragment extends Fragment {
             workoutSummary.put("completedExercises", completedExercises);
             workoutSummary.put("timestamp", System.currentTimeMillis());
 
+            // Add formatted date
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            String date = sdf.format(new Date());
+            workoutSummary.put("date", date);
+
             db.collection("workout_summaries").add(workoutSummary)
                     .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(getContext(), "Workout summary saved", Toast.LENGTH_SHORT).show();
+                        Context context = getContext();
+                        if (context != null) {
+                            Toast.makeText(context, "Workout summary saved", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e("WorkoutSummaryFragment", "Context is null, cannot show Toast");
+                        }
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Error saving workout summary", Toast.LENGTH_SHORT).show();
+                        Context context = getContext();
+                        if (context != null) {
+                            Toast.makeText(context, "Error saving workout summary", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e("WorkoutSummaryFragment", "Context is null, cannot show Toast");
+                        }
                     });
         } else {
-            Toast.makeText(getContext(), "User not logged in", Toast.LENGTH_SHORT).show();
+            Context context = getContext();
+            if (context != null) {
+                Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.e("WorkoutSummaryFragment", "Context is null, cannot show Toast");
+            }
         }
     }
 }
