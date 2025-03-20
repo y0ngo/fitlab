@@ -147,6 +147,10 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Exercise> exercises = response.body().getExercises();
+                    for (Exercise exercise : exercises) {
+                        exercise.setName(removeHtmlTags(exercise.getName()));
+                        exercise.setDescription(removeHtmlTags(exercise.getDescription()));
+                    }
                     exerciseAdapter = new ExerciseAdapterFilterable(exercises, exercise -> {
                         // Handle exercise click
                     });
@@ -170,6 +174,10 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<ExerciseResponse> call, Response<ExerciseResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Exercise> exercises = response.body().getExercises();
+                    for (Exercise exercise : exercises) {
+                        exercise.setName(removeHtmlTags(exercise.getName()));
+                        exercise.setDescription(removeHtmlTags(exercise.getDescription()));
+                    }
                     exerciseAdapter = new ExerciseAdapterFilterable(exercises, exercise -> {
                         // Handle exercise click
                     });
