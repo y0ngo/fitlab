@@ -1,55 +1,85 @@
 package com.example.fitlab;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
 public class Exercise {
+    @SerializedName("bodyPart")
+    private String bodyPart;
+
+    @SerializedName("equipment")
+    private String equipment;
+
+    @SerializedName("id")
+    private String id;
+
     @SerializedName("name")
     private String name;
 
-    @SerializedName("description")
-    private String description;
+    @SerializedName("target")
+    private String target;
 
-    private String imageUrl;
+    @SerializedName("secondaryMuscles")
+    private List<String> secondaryMuscles;
 
-    private Integer id;
-    private String muscle;
+    @SerializedName("instructions")
+    private List<String> instructions;
 
     // Getters and setters
-    public String getName() {
-        return name;
+    public String getBodyPart() {
+        return bodyPart;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBodyPart(String bodyPart) {
+        this.bodyPart = bodyPart;
+    }
+
+    public String getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(String equipment) {
+        this.equipment = equipment;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-
-    public Integer getId() {
-        return id;
+    public String getTarget() {
+        return target;
     }
 
-    public String getDescription() {
-        return description;
+    public void setTarget(String target) {
+        this.target = target;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public List<String> getSecondaryMuscles() {
+        return secondaryMuscles;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public void setSecondaryMuscles(List<String> secondaryMuscles) {
+        this.secondaryMuscles = secondaryMuscles;
     }
 
-    public String getMuscle() {
-        return muscle;
+    public List<String> getInstructions() {
+        return instructions;
     }
 
-    public void setMuscle(String muscle) {
-        this.muscle = muscle;
+    public void setInstructions(List<String> instructions) {
+        this.instructions = instructions;
     }
 
     @Override

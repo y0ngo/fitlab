@@ -1,5 +1,6 @@
 package com.example.fitlab;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -13,4 +14,6 @@ public interface WgerApi {
 
     @GET("exerciseimage/")
     Call<ExerciseImageResponse> getExerciseImages(@Query("exercise") int exerciseId);
+    @GET("exercise/")
+    Call<ResponseBody> getExercise(@Query("language") int languageId);
 }

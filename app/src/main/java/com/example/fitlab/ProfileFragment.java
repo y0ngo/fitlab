@@ -1,6 +1,8 @@
 package com.example.fitlab;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +55,15 @@ public class ProfileFragment extends Fragment {
         // Load user data
         loadUserData();
 
+        // Set logout button click listener
+        logoutButton.setOnClickListener(v -> {
+            mAuth.signOut();
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            getActivity().finish();
+        });
+
         return view;
     }
 
@@ -68,11 +79,11 @@ public class ProfileFragment extends Fragment {
                             Long weight = documentSnapshot.getLong("weight");
                             String goal = documentSnapshot.getString("fitnessGoal");
 
-                            profileName.setText(name);
-                            profileEmail.setText(email);
+                            profileName.setText(name != null ? name : "N/A");
+                            profileEmail.setText(email != null ? email : "N/A");
                             heightValue.setText(height != null ? String.valueOf(height) : "N/A");
                             weightValue.setText(weight != null ? String.valueOf(weight) : "N/A");
-                            fitnessGoal.setText(goal);
+                            fitnessGoal.setText(goal != null ? goal : "N/A");
 
                             if (height != null && weight != null) {
                                 double bmi = calculateBMI(height, weight);
@@ -80,11 +91,15 @@ public class ProfileFragment extends Fragment {
                             } else {
                                 bmiValue.setText("N/A");
                             }
+                        } else {
+                            Log.e("ProfileFragment", "Document does not exist");
                         }
                     })
                     .addOnFailureListener(e -> {
-                        // Handle the error
+                        Log.e("ProfileFragment", "Error fetching document", e);
                     });
+        } else {
+            Log.e("ProfileFragment", "User is not authenticated");
         }
     }
 

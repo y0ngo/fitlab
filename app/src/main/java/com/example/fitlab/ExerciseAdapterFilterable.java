@@ -5,18 +5,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
-import com.example.fitlab.Exercise;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdapterFilterable.ExerciseViewHolder> {
+public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdapterFilterable.ExerciseViewHolder> implements Filterable {
     private List<Exercise> originalList;
     private List<Exercise> filteredList;
     private int selectedPosition = RecyclerView.NO_POSITION;
@@ -38,7 +32,7 @@ public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdap
     public void onBindViewHolder(ExerciseViewHolder holder, int position) {
         Exercise exercise = filteredList.get(position);
         holder.exerciseName.setText(exercise.getName());
-        holder.exerciseDescription.setText(exercise.getDescription());
+        holder.exerciseInstructions.setText(String.join("\n", exercise.getInstructions()));
 
         holder.itemView.setSelected(selectedPosition == position);
         holder.itemView.setOnClickListener(v -> {
@@ -55,12 +49,12 @@ public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdap
     }
 
     public static class ExerciseViewHolder extends RecyclerView.ViewHolder {
-        TextView exerciseName, exerciseDescription;
+        TextView exerciseName, exerciseInstructions;
 
         public ExerciseViewHolder(View itemView) {
             super(itemView);
             exerciseName = itemView.findViewById(R.id.exerciseName);
-            exerciseDescription = itemView.findViewById(R.id.exerciseDescription);
+            exerciseInstructions = itemView.findViewById(R.id.exerciseInstructions);
         }
     }
 
@@ -68,8 +62,7 @@ public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdap
         void onExerciseClick(Exercise exercise);
     }
 
-
-
+    @Override
     public Filter getFilter() {
         return new Filter() {
             @Override
@@ -82,7 +75,7 @@ public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdap
                 } else {
                     String filterPattern = constraint.toString().toLowerCase().trim();
                     for (Exercise exercise : originalList) {
-                        if (exercise.getMuscle().toLowerCase().contains(filterPattern)) {
+                        if (exercise.getBodyPart().toLowerCase().contains(filterPattern)) {
                             filteredList.add(exercise);
                         }
                     }
@@ -103,6 +96,4 @@ public class ExerciseAdapterFilterable extends RecyclerView.Adapter<ExerciseAdap
             }
         };
     }
-
-
-    }
+}

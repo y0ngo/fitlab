@@ -67,7 +67,7 @@ public class SignupActivity extends AppCompatActivity {
                                 .set(userData)
                                 .addOnSuccessListener(aVoid -> {
                                     Toast.makeText(this, "Signup successful!", Toast.LENGTH_SHORT).show();
-                                    replaceFragment(new HomeFragment());
+                                    replaceFragment(new FitnessDetailsFragment());
                                 })
                                 .addOnFailureListener(e -> {
                                     Toast.makeText(this, "Error saving data", Toast.LENGTH_SHORT).show();

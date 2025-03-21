@@ -3,12 +3,9 @@ package com.example.fitlab;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder> {
@@ -29,8 +26,7 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
     public void onBindViewHolder(@NonNull ExerciseViewHolder holder, int position) {
         Exercise exercise = exerciseList.get(position);
         holder.exerciseName.setText(exercise.getName());
-        holder.exerciseDescription.setText(exercise.getDescription());
-  ;
+        holder.exerciseInstructions.setText(String.join("\n", exercise.getInstructions()));
     }
 
     @Override
@@ -39,14 +35,12 @@ public class ExerciseAdapter extends RecyclerView.Adapter<ExerciseAdapter.Exerci
     }
 
     public static class ExerciseViewHolder extends RecyclerView.ViewHolder {
-        TextView exerciseName, exerciseDescription;
-
+        TextView exerciseName, exerciseInstructions;
 
         public ExerciseViewHolder(@NonNull View itemView) {
             super(itemView);
             exerciseName = itemView.findViewById(R.id.exerciseName);
-            exerciseDescription = itemView.findViewById(R.id.exerciseDescription);
-
+            exerciseInstructions = itemView.findViewById(R.id.exerciseInstructions);
         }
     }
 }
