@@ -88,6 +88,7 @@ public class SelectExerciseFragment extends Fragment {
             }
         });
 
+
         doneButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putStringArrayList("addedExercises", new ArrayList<>(addedExercises));
@@ -99,7 +100,6 @@ public class SelectExerciseFragment extends Fragment {
                     .addToBackStack(null)
                     .commit();
         });
-
         return view;
     }
 

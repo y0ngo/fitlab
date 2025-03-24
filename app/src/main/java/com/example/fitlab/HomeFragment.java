@@ -12,6 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +34,7 @@ public class HomeFragment extends Fragment {
     private ExerciseDBApi api;
     private Map<String, String> muscleMap;
     private boolean isSpinnerInitialized = false;
+    private YouTubePlayerView youTubePlayerView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +59,17 @@ public class HomeFragment extends Fragment {
 
         // Fetch exercises
         fetchExercises();
+
+        youTubePlayerView = view.findViewById(R.id.youtube_player_view);
+        getLifecycle().addObserver(youTubePlayerView);
+
+        youTubePlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                String videoId = "m8wZNGL4iA4";
+                youTubePlayer.loadVideo(videoId, 0);
+            }
+        });
 
         return view;
     }
